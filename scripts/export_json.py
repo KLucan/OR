@@ -37,7 +37,7 @@ for row in cur.execute("SELECT * FROM games").fetchall():
             "genres": genres,
             "score": score,
             "length": length,
-            "has_multiplayer": has_multiplayer,
+            "has_multiplayer": bool(has_multiplayer),
         }
     )
 with open("video_igre.json", "w", encoding="UTF-8", newline="\n") as file:

@@ -27,7 +27,7 @@ Ključne riječi: games, developers, publishers
 - release_date: datum kada je igra izašla, ISO 8601 format YYYY-MM-DD
     - u slučaju više datuma (recimo igra je izašla najprije u Japanu pa zatim ostatku svijeta), uzima se onaj koji je prvi
 - score: "Top Critic Average" ocjena sa stranice [OpenCritic](https://opencritic.com/)
-- length: duljina igre u satima kao što je zapisano na stranici [HowLongToBeat](https://howlongtobeat.com/)
+- length: "Main + Sides" duljina igre u satima kao što je zapisano na stranici [HowLongToBeat](https://howlongtobeat.com/)
 - has_multiplayer: ima li igra neki oblik multiplayera
 
 ### Companies

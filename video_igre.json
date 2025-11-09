@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "name": "The Elder Scrolls V: Skyrim",
     "publisher": {
@@ -15,7 +15,7 @@
     ],
     "score": null,
     "length": 110.0,
-    "has_multiplayer": 0
+    "has_multiplayer": false
   },
   {
     "name": "Dishonored",
@@ -33,7 +33,7 @@
     ],
     "score": null,
     "length": 18.5,
-    "has_multiplayer": 0
+    "has_multiplayer": false
   },
   {
     "name": "Dishonored 2",
@@ -51,7 +51,7 @@
     ],
     "score": 87,
     "length": 23.0,
-    "has_multiplayer": 0
+    "has_multiplayer": false
   },
   {
     "name": "Prey",
@@ -70,7 +70,7 @@
     ],
     "score": 81,
     "length": 28.0,
-    "has_multiplayer": 0
+    "has_multiplayer": false
   },
   {
     "name": "Doom",
@@ -88,7 +88,7 @@
     ],
     "score": 86,
     "length": 16.5,
-    "has_multiplayer": 1
+    "has_multiplayer": true
   },
   {
     "name": "Doom Eternal",
@@ -106,7 +106,7 @@
     ],
     "score": 89,
     "length": 20.5,
-    "has_multiplayer": 1
+    "has_multiplayer": true
   },
   {
     "name": "Wolfenstein: The New Order",
@@ -124,7 +124,7 @@
     ],
     "score": 82,
     "length": 15.2,
-    "has_multiplayer": 0
+    "has_multiplayer": false
   },
   {
     "name": "Wolfenstein II: The New Colossus",
@@ -142,7 +142,7 @@
     ],
     "score": 87,
     "length": 17.0,
-    "has_multiplayer": 0
+    "has_multiplayer": false
   },
   {
     "name": "StarCraft",
@@ -160,7 +160,7 @@
     ],
     "score": null,
     "length": 27.5,
-    "has_multiplayer": 1
+    "has_multiplayer": true
   },
   {
     "name": "StarCraft II: Wings of Liberty",
@@ -178,6 +178,6 @@
     ],
     "score": null,
     "length": 21.5,
-    "has_multiplayer": 1
+    "has_multiplayer": true
   }
 ]

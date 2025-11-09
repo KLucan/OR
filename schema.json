@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OR Video Igre",
+  "description": "Skup video igri za otvoreno računarstvo.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "title": "Game",
+    "description": "Objekt koji sadrži sve podatke o jednoj igri.",
+    "required": [
+      "name",
+      "publisher",
+      "developer",
+      "release-date"
+    ],
+    "properties": {
+      "name": {
+        "type": "string",
+        "title": "Name",
+        "description": "Naziv filma."
+      },
+      "publisher": {
+        "title": "Publisher",
+        "description": "Izdavač igre.",
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "title": "Name",
+            "description": "Ime izdavača.",
+            "type": "string"
+          },
+          "country-code": {
+            "title": "Country code",
+            "description": "Država izdavača, ISO 3166 format.",
+            "type": ["string", "null"]
+          }
+        }
+      },
+      "developer": {
+        "title": "Developer",
+        "description": "Autor igre.",
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "title": "Name",
+            "description": "Ime autora.",
+            "type": "string"
+          },
+          "country-code": {
+            "title": "Country code",
+            "description": "Država autora, ISO 3166 format.",
+            "type": "string"
+          }
+        }
+      },
+      "release-date": {
+        "title": "Release date",
+        "description": "Datum izdavanja, ako ih ima više, onaj prvi. ISO 8601 format.",
+        "type": "string",
+        "format": "date"
+      },
+      "genres": {
+        "title": "Genres",
+        "description": "Popis žanrova kojima igra pripada.",
+        "type": "array",
+        "items": {
+          "title": "Genre",
+          "description": "Žanr kojemu igra pripada.",  
+          "type": "string"
+        }
+      },
+      "score": {
+        "title": "Score",
+        "description": "\"Top Critic Average\" ocjena sa stranice https://opencritic.com/",
+        "type": ["integer", "null"]
+      },
+      "length": {
+        "title": "Length",
+        "description": "\"Main + Sides\" duljina trajanja igre sa stranice https://howlongtobeat.com/",
+        "type": ["number", "null"]
+      },
+      "has_multiplayer": {
+        "title": "Has multiplayer?",
+        "description": "Boolean koji određuje ima li igra podršku za multiplayer.",
+        "type": ["boolean", "null"]
+      }
+    }
+  }
+}
