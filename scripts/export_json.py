@@ -14,7 +14,7 @@ for row in cur.execute("SELECT name, readable_name FROM genres"):
     name, readable_name = row
     genres.update({name: readable_name})
 for row in cur.execute("SELECT * FROM games").fetchall():
-    id, name, publisher, developer, release_date, score, length = row
+    id, name, publisher, developer, release_date, score, length, has_multiplayer = row
     genres = []
     genre_game_query = cur.execute(
         f"SELECT game, readable_name FROM games_genres JOIN genres ON games_genres.genre = genres.name WHERE game = {id}"
@@ -37,6 +37,8 @@ for row in cur.execute("SELECT * FROM games").fetchall():
             "genres": genres,
             "score": score,
             "length": length,
+            "has_multiplayer": has_multiplayer,
         }
     )
-print(json.dumps(data, indent=2))
+with open("video_igre.json", "w", encoding="UTF-8", newline="\n") as file:
+    file.write(json.dumps(data, indent=2, ))

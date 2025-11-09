@@ -2,7 +2,7 @@
 
 Repozitorij sadrži informacije o nekim izabranim video igrama.
 Osim osnovnih informacija o igrama također sadrži imena i međusobne odnose među razvojnim studjima (developers) i izdavačima (publishers).
-POdaci su dostupni kao `.sql`, `.json` i `.csv`
+Podaci su dostupni kao `.sql`, `.json` i `.csv`
 
 Autor: Karlo Lučan
 
@@ -27,7 +27,8 @@ Ključne riječi: games, developers, publishers
 - release_date: datum kada je igra izašla, ISO 8601 format YYYY-MM-DD
     - u slučaju više datuma (recimo igra je izašla najprije u Japanu pa zatim ostatku svijeta), uzima se onaj koji je prvi
 - score: "Top Critic Average" ocjena sa stranice [OpenCritic](https://opencritic.com/)
-- length: Duljina igre u satima kao što je zapisano na stranici [HowLongToBeat](https://howlongtobeat.com/)
+- length: duljina igre u satima kao što je zapisano na stranici [HowLongToBeat](https://howlongtobeat.com/)
+- has_multiplayer: ima li igra neki oblik multiplayera
 
 ### Companies
 

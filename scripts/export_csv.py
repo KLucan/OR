@@ -15,7 +15,7 @@ for row in cur.execute("SELECT name, readable_name FROM genres"):
     name, readable_name = row
     genres.update({name: readable_name})
 for row in cur.execute("SELECT * FROM games").fetchall():
-    id, name, publisher, developer, release_date, score, length = row
+    id, name, publisher, developer, release_date, score, length, has_multiplayer = row
     genres = []
     genre_game_query = cur.execute(
         f"SELECT game, readable_name FROM games_genres JOIN genres ON games_genres.genre = genres.name WHERE game = {id}"
@@ -34,8 +34,10 @@ for row in cur.execute("SELECT * FROM games").fetchall():
             "genres": ";".join(genres),
             "score": score,
             "length": length,
+            "has_multiplayer": has_multiplayer,
         }
     )
-writer = csv.writer(sys.stdout, delimiter=",")
-for row in data:
-    writer.writerow(row.values())
+with open("video_igre.csv", "w", encoding="UTF-8", newline="") as file:
+    writer = csv.writer(file, delimiter=",", dialect="unix")
+    for row in data:
+        writer.writerow(row.values())
