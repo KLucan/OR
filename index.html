@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+        <meta name="description" content="OR Laboratorijske vježbe">
+        <meta name="keywords" content="games, developers, publishers">
+        <meta name="author" content="Karlo Lučan">
+        <meta name="description" content="Baza podataka o video igrama, njihovim publisherima i developerima. Podaci su dostupni u HTML, JSON i CSV formatima.">
+
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.js" integrity="sha384-ezjq8118wdwdRMj+nX4bevEi+cDLTbhLAeFF688VK8tPDGeLUe0WoY2MZtSla72F" crossorigin="anonymous"></script>
+        <meta name="htmx-config" content='{"selfRequestsOnly":false}'>
+	</head>
+	<body>
+		<h1>OR Laboratorijske vježbe</h1>
+        <div>
+            <h2>
+                CSS zapis podataka
+            </h2>
+            <p>
+                <a href="/video_igre.csv">Preuzmi</a>    <button hx-post="/update_csv" hx-swap="none">Refresh</button>
+            </p>
+        </div>
+        <div>
+            <h2>
+                JSON zapis podataka
+            </h2>
+            <p>
+                <a href="/video_igre.json">Preuzmi</a>   <button hx-post="/update_json" hx-swap="none">Refresh</button>
+            </p>
+        </div>
+        <div>
+            <h2>
+                <a href="/datatable">HTML prikaz podataka</a>
+            </h2>
+        </div>
+        <hr>
+        <p>Autor: Karlo Lučan</p>
+        <p>Verzija: 2.1</p>
+        <p>Jezik: engleski</p>
+        <p>Licencija: MIT</p>
+        <p>Datum zadnje izmjene podataka: 2025-11-09</p>
+        <p>Ključne riječi: games, developers, publishers</p>
+        <h2 id="shema-podataka">Shema podataka</h2>
+        <h3 id="games">Games</h3>
+        <ul>
+        <li>name: ime igre, do 60 znakova</li>
+        <li>publisher: izdavač igre</li>
+        <li>developer: razvojni studio koji je stvorio igru</li>
+        <li>release_date: datum kada je igra izašla, ISO 8601 format YYYY-MM-DD<ul>
+        <li>u slučaju više datuma (recimo igra je izašla najprije u Japanu pa zatim ostatku svijeta), uzima se onaj koji je prvi</li>
+        </ul>
+        </li>
+        <li>score: &quot;Top Critic Average&quot; ocjena sa stranice <a href="https://opencritic.com/">OpenCritic</a></li>
+        <li>length: &quot;Main + Sides&quot; duljina igre u satima kao što je zapisano na stranici <a href="https://howlongtobeat.com/">HowLongToBeat</a></li>
+        <li>has_multiplayer: ima li igra neki oblik multiplayera</li>
+        </ul>
+        <h3 id="companies">Companies</h3>
+        <ul>
+        <li>name: ime firme, do 60 znakova</li>
+        <li>country_code: dvoslovni kod države u kojoj je središte firme, ISO 3166 format</li>
+        <li>parent: firma vlasnik</li>
+        </ul>
+        <h3 id="genres">Genres</h3>
+        <ul>
+        <li>name: kratki unikatni indikator, do 20 znakova</li>
+        <li>readable_name: čitljivije ime žanra</li>
+        <li>parent: žanr čiji je podvrsta</li>
+        </ul>
+	</body>
+    
+</html>

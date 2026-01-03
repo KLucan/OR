@@ -1,13 +1,10 @@
-import json
-import tempfile
-
 from fasthtml.common import *
 from scripts.export_json import export_json
 from scripts.export_csv import export_csv
-from scripts.db import get_data
+from db import Db
+from model import *
 
 app = FastHTML()
-
 
 @app.route("/", methods="get")
 def home():
@@ -24,14 +21,14 @@ def get():
     return FileResponse("../video_igre.csv", filename="video_igre.csv")
 
 
-@app.route("/api/json", methods="get")
+@app.route("/video_igre.json", methods="get")
 def get():
-    with open("../video_igre.json", "r") as file:
-        return JSONResponse(get_data())
+    return FileResponse("../video_igre.json", filename="video_igre.json")
 
-@app.route("/get_csv", methods="get")
+
+@app.route("/api/csv", methods="get")
 def get(search: str = "", vrijednost: str = ""):
-    data = get_data(flat=True)
+    data = Db().get_data(flat=True)
     res = []
     for row in data:
         if search:
@@ -47,11 +44,11 @@ def get(search: str = "", vrijednost: str = ""):
         res.append(",".join([str(x) if x is not None else "" for x in row.values()]))
     return HTMLResponse("\n".join(res))
 
-@app.route("/get_json", methods="get")
+@app.route("/api/json", methods="get")
 def get(search: str = "", vrijednost: str = ""):
-    data = get_data(flat=True)
+    db = Db()
+    data = Db().get_data(flat=True)
     res = []
-    res_row = {}
     for row in data:
         if search:
             wholerow = ""
@@ -83,9 +80,10 @@ def get(search: str = "", vrijednost: str = ""):
         )
     return JSONResponse(res)
 
+
 @app.route("/api/html", methods="get", body_wrap=False)
 def get(search: str = "", vrijednost: str = ""):
-    data = get_data(flat=True)
+    data = Db().get_data(flat=True)
     rows = []
     for row in data:
         if search:
@@ -131,21 +129,16 @@ def get(search: str = "", vrijednost: str = ""):
     )
 
 
-@app.route("/video_igre.json", methods="get")
-def get():
-    return FileResponse("../video_igre.json", filename="video_igre.json")
-
-
 @app.route("/update_csv", methods=["post", "put"])
 def post_or_put():
     export_csv()
-    return "Refresh"
+    return HTMLResponse()
 
 
 @app.route("/update_json", methods=["post", "put"])
 def post_or_put():
     export_json()
-    return "Refresh"
+    return HTMLResponse()
 
 
 serve()

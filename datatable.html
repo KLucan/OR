@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html id="doc" lang="en">
+	<head>
+		<meta charset="UTF-8" />
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.js" integrity="sha384-ezjq8118wdwdRMj+nX4bevEi+cDLTbhLAeFF688VK8tPDGeLUe0WoY2MZtSla72F" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<h1>OR Laboratorijska vježba 2</h1>
+        <div><a href="/">Povratak</a></div>
+        <div style='display:flex'>
+            <form id="form" hx-get="/api/html" hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load" hx-target="#igre" >
+                <input id="search" class="form-control" type="search"
+                    name="search" placeholder="Pretraga...">
+                <label> Atribut po kojemu treba vršiti pretragu: </label>
+                <select id="vrijednost" name="vrijednost">
+                    <option value="">Svi atributi</option>
+                    <option value="name">Name</option>
+                    <option value="publisher-name">Publisher</option>
+                    <option value="publisher-country-code">Publisher country</option>
+                    <option value="developer-name">Developer</option>
+                    <option value="developer-country-code">Developer country</option>
+                    <option value="release-date">Release date</option>
+                    <option value="genres">Genre</option>
+                </select>
+            </form>
+            <button onclick="downloadCSV()">Preuzmi CSV</button>
+            <button onclick="downloadJSON()">Preuzmi JSON</button>
+        </div>
+        <div>
+            <table id="igre" class="display"hx-trigger="load" hx-target="this" hx-swap="outerHTML"></table>
+        </div>
+        <script>
+        function downloadFile(url, filename) {
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        function downloadCSV() {
+            const search = document.querySelector("[name='search']").value;
+            const vrijednost = document.querySelector("[name='vrijednost']").value;
+            const url = `/api/csv?search=${encodeURIComponent(search)}&vrijednost=${encodeURIComponent(vrijednost)}`;
+
+            downloadFile(url, "video_igre.csv")
+        }
+        function downloadJSON() {
+            const search = document.querySelector("[name='search']").value;
+            const vrijednost = document.querySelector("[name='vrijednost']").value;
+            const url = `/api/json?search=${encodeURIComponent(search)}&vrijednost=${encodeURIComponent(vrijednost)}`;
+
+            downloadFile(url, "video_igre.json")
+        }
+        </script>
+	</body>
+</html>
