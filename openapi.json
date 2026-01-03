@@ -1,0 +1,850 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OR Laboratorijske vježbe",
+    "description": "Stranica s informacijama o video igrama za potrebe laboratorijskih vježbi predmeta Otvoreno Računarstvo.",
+    "contact": {
+      "email": "karlo.lucan@fer.hr"
+    },
+    "license": {
+      "name": "Multiple",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "3.0.0"
+  },
+  "tags": [
+    {
+      "name": "game",
+      "description": "Podaci o igri"
+    },
+    {
+      "name": "company",
+      "description": "Podaci o firmi koja razvija ili izdaje igre"
+    },
+    {
+      "name": "genre",
+      "description": "Podaci o žanru igara"
+    }
+  ],
+  "paths": {
+    "/dump": {
+      "get": {
+        "summary": "Dohvati sve igre",
+        "description": "Vraća kompletnu kolekciju video igara.",
+        "operationId": "getAllGames",
+        "tags": ["game"],
+        "responses": {
+          "200": {
+            "description": "Uspješno dohvaćena kolekcija igara.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameArray"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      }
+    },
+    "/game": {
+      "post": {
+        "summary": "Dodaj novu igru",
+        "description": "Kreira novu igru u bazi podataka.",
+        "operationId": "createGame",
+        "tags": ["game"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "publisher", "developer", "release_date"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "publisher": {
+                    "type": "integer",
+                    "description": "ID izdavača"
+                  },
+                  "developer": {
+                    "type": "integer",
+                    "description": "ID developera"
+                  },
+                  "release_date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "genres": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Popis žanrova (skraćeni nazivi)"
+                  },
+                  "score": {
+                    "type": "integer",
+                    "nullable": true
+                  },
+                  "length": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "has_multiplayer": {
+                    "type": "boolean",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Igra uspješno kreirana.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "ID novo kreirane igre."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Neispravni podaci u zahtjevu."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      }
+    },
+    "/game/{id}": {
+      "get": {
+        "summary": "Dohvati igru po ID-u",
+        "description": "Vraća podatke o jednoj igri na temelju jedinstvenog identifikatora.",
+        "operationId": "getGameById",
+        "tags": ["game"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Jedinstveni identifikator igre.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uspješno dohvaćena igra.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Game"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Igra s navedenim ID-om nije pronađena."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      },
+      "put": {
+        "summary": "Ažuriraj igru",
+        "description": "Ažurira postojeću igru na temelju ID-a.",
+        "operationId": "updateGame",
+        "tags": ["game"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Jedinstveni identifikator igre.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "publisher", "developer", "release_date"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "publisher": {
+                    "type": "integer",
+                    "description": "ID izdavača"
+                  },
+                  "developer": {
+                    "type": "integer",
+                    "description": "ID developera"
+                  },
+                  "release_date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "genres": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Popis žanrova (skraćeni nazivi)"
+                  },
+                  "score": {
+                    "type": "integer",
+                    "nullable": true
+                  },
+                  "length": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "has_multiplayer": {
+                    "type": "boolean",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Igra uspješno ažurirana."
+          },
+          "400": {
+            "description": "Neispravni podaci u zahtjevu."
+          },
+          "404": {
+            "description": "Igra s navedenim ID-om nije pronađena."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Obriši igru",
+        "description": "Briše igru iz baze podataka na temelju ID-a.",
+        "operationId": "deleteGame",
+        "tags": ["game"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Jedinstveni identifikator igre.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Igra uspješno obrisana."
+          },
+          "404": {
+            "description": "Igra s navedenim ID-om nije pronađena."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      }
+    },
+    "/game/genre/{name}": {
+      "get": {
+        "summary": "Dohvati igre po žanru",
+        "description": "Vraća popis igara koje pripadaju određenom žanru.",
+        "operationId": "getGamesByGenre",
+        "tags": ["game"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Skraćeni naziv žanra (npr. \"FPS\", \"RPG\", \"RTS\").",
+            "schema": {
+              "type": "string",
+              "maxLength": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uspješno dohvaćene igre za navedeni žanr.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameArray"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Žanr s navedenim nazivom nije pronađen."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      }
+    },
+    "/company": {
+      "post": {
+        "summary": "Dodaj novu kompaniju",
+        "description": "Kreira novu kompaniju u bazi podataka.",
+        "operationId": "createCompany",
+        "tags": ["company"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "country_code": {
+                    "type": "string",
+                    "maxLength": 2,
+                    "nullable": true
+                  },
+                  "parent": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "ID roditeljske kompanije"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Kompanija uspješno kreirana.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "ID novo kreirane kompanije."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Neispravni podaci u zahtjevu."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      }
+    },
+    "/company/{id}": {
+      "get": {
+        "summary": "Dohvati kompaniju po ID-u",
+        "description": "Vraća podatke o kompaniji (izdavač ili developer) na temelju jedinstvenog identifikatora.",
+        "operationId": "getCompanyById",
+        "tags": ["company"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Jedinstveni identifikator kompanije.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uspješno dohvaćena kompanija.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Kompanija s navedenim ID-om nije pronađena."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      },
+      "put": {
+        "summary": "Ažuriraj kompaniju",
+        "description": "Ažurira postojeću kompaniju na temelju ID-a.",
+        "operationId": "updateCompany",
+        "tags": ["company"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Jedinstveni identifikator kompanije.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "country_code": {
+                    "type": "string",
+                    "maxLength": 2,
+                    "nullable": true
+                  },
+                  "parent": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "ID roditeljske kompanije"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kompanija uspješno ažurirana."
+          },
+          "400": {
+            "description": "Neispravni podaci u zahtjevu."
+          },
+          "404": {
+            "description": "Kompanija s navedenim ID-om nije pronađena."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Obriši kompaniju",
+        "description": "Briše kompaniju iz baze podataka na temelju ID-a.",
+        "operationId": "deleteCompany",
+        "tags": ["company"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Jedinstveni identifikator kompanije.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kompanija uspješno obrisana."
+          },
+          "404": {
+            "description": "Kompanija s navedenim ID-om nije pronađena."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      }
+    },
+    "/genre": {
+      "post": {
+        "summary": "Dodaj novi žanr",
+        "description": "Kreira novi žanr u bazi podataka.",
+        "operationId": "createGenre",
+        "tags": ["genre"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "readable_name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "description": "Skraćeni naziv žanra"
+                  },
+                  "readable_name": {
+                    "type": "string",
+                    "maxLength": 60,
+                    "description": "Čitljivi naziv žanra"
+                  },
+                  "parent": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "nullable": true,
+                    "description": "Nadređeni žanr"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Žanr uspješno kreiran.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Naziv novo kreiranog žanra."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Neispravni podaci u zahtjevu."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      }
+    },
+    "/genre/{name}": {
+      "get": {
+        "summary": "Dohvati žanr po nazivu",
+        "description": "Vraća podatke o žanru na temelju njegovog skraćenog naziva.",
+        "operationId": "getGenreByName",
+        "tags": ["genre"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Skraćeni naziv žanra (npr. \"FPS\", \"RPG\", \"RTS\").",
+            "schema": {
+              "type": "string",
+              "maxLength": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uspješno dohvaćen žanr.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Genre"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Žanr s navedenim nazivom nije pronađen."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      },
+      "put": {
+        "summary": "Ažuriraj žanr",
+        "description": "Ažurira postojeći žanr na temelju naziva.",
+        "operationId": "updateGenre",
+        "tags": ["genre"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Skraćeni naziv žanra.",
+            "schema": {
+              "type": "string",
+              "maxLength": 20
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["readable_name"],
+                "properties": {
+                  "readable_name": {
+                    "type": "string",
+                    "maxLength": 60,
+                    "description": "Čitljivi naziv žanra"
+                  },
+                  "parent": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "nullable": true,
+                    "description": "Nadređeni žanr"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Žanr uspješno ažuriran."
+          },
+          "400": {
+            "description": "Neispravni podaci u zahtjevu."
+          },
+          "404": {
+            "description": "Žanr s navedenim nazivom nije pronađen."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Obriši žanr",
+        "description": "Briše žanr iz baze podataka na temelju naziva.",
+        "operationId": "deleteGenre",
+        "tags": ["genre"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Skraćeni naziv žanra.",
+            "schema": {
+              "type": "string",
+              "maxLength": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Žanr uspješno obrisan."
+          },
+          "404": {
+            "description": "Žanr s navedenim nazivom nije pronađen."
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      }
+    },
+    "/openapi": {
+      "get": {
+        "summary": "Dohvati OpenAPI specifikaciju",
+        "description": "Vraća OpenAPI specifikaciju API-ja u JSON formatu.",
+        "operationId": "getOpenApiSpec",
+        "tags": ["api"],
+        "responses": {
+          "200": {
+            "description": "OpenAPI specifikacija uspješno dohvaćena.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "OpenAPI 3.0 specifikacija"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Greška na serveru."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Company": {
+        "type": "object",
+        "title": "Company",
+        "description": "Kompanija (izdavač ili developer).",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "ID",
+            "description": "Jedinstveni identifikator kompanije."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 60,
+            "title": "Name",
+            "description": "Ime kompanije."
+          },
+          "country_code": {
+            "type": "string",
+            "maxLength": 2,
+            "nullable": true,
+            "title": "Country code",
+            "description": "Država kompanije, ISO 3166 format."
+          },
+          "parent": {
+            "type": "integer",
+            "nullable": true,
+            "title": "Parent",
+            "description": "ID roditeljske kompanije."
+          }
+        }
+      },
+      "Genre": {
+        "type": "object",
+        "title": "Genre",
+        "description": "Žanr video igre.",
+        "required": ["name", "readable_name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 20,
+            "title": "Name",
+            "description": "Skraćeni naziv žanra."
+          },
+          "readable_name": {
+            "type": "string",
+            "maxLength": 60,
+            "title": "Readable name",
+            "description": "Čitljivi naziv žanra."
+          },
+          "parent": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true,
+            "title": "Parent",
+            "description": "Nadređeni žanr."
+          }
+        }
+      },
+      "Game": {
+        "type": "object",
+        "title": "Game",
+        "description": "Objekt koji sadrži sve podatke o jednoj igri.",
+        "required": ["id", "name", "publisher", "developer", "release_date"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "ID",
+            "description": "Jedinstveni identifikator igre."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 60,
+            "title": "Name",
+            "description": "Naziv igre."
+          },
+          "publisher": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Company"
+              },
+              {
+                "title": "Publisher",
+                "description": "Izdavač igre."
+              }
+            ]
+          },
+          "developer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Company"
+              },
+              {
+                "title": "Developer",
+                "description": "Autor igre."
+              }
+            ]
+          },
+          "release_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Release date",
+            "description": "Datum izdavanja, ako ih ima više, onaj prvi. ISO 8601 format."
+          },
+          "genres": {
+            "type": "array",
+            "title": "Genres",
+            "description": "Popis žanrova kojima igra pripada.",
+            "items": {
+              "$ref": "#/components/schemas/Genre"
+            }
+          },
+          "score": {
+            "type": "integer",
+            "nullable": true,
+            "title": "Score",
+            "description": "\"Top Critic Average\" ocjena sa stranice https://opencritic.com/"
+          },
+          "length": {
+            "type": "number",
+            "nullable": true,
+            "title": "Length",
+            "description": "\"Main + Sides\" duljina trajanja igre sa stranice https://howlongtobeat.com/"
+          },
+          "has_multiplayer": {
+            "type": "boolean",
+            "nullable": true,
+            "title": "Has multiplayer?",
+            "description": "Boolean koji određuje ima li igra podršku za multiplayer."
+          }
+        }
+      },
+      "GameArray": {
+        "type": "array",
+        "title": "OR Video Igre",
+        "description": "Skup video igri za otvoreno računarstvo.",
+        "items": {
+          "$ref": "#/components/schemas/Game"
+        }
+      }
+    }
+  }
+}
