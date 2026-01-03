@@ -1,1 +1,5 @@
 *.db3
+__pycache__
+.sesskey
+.python-version
+uv.lock
