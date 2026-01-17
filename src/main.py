@@ -9,7 +9,7 @@ from scripts.export_json import export_json
 from scripts.export_csv import export_csv
 from scripts.db import get_data
 
-exception_handlers = {500: internal_error}
+exception_handlers = {500: internal_error, 405: bad_method}
 
 app = FastHTML(exception_handlers=exception_handlers)
 auth_client = Auth0AppClient(
@@ -24,26 +24,75 @@ auth_client = Auth0AppClient(
 def home():
     return FileResponse("../index.html")
 
+
 @app.get("/redirect")
-async def redirect_handler(code: str, req):
-    req.session['authenticated'] = True
+def redirect(code: str, req):
+    redirect_uri = f"{req.url.scheme}://{req.url.netloc}/redirect"
+    user_info = auth_client.retr_info(code, redirect_uri)
+    req.session["authenticated"] = True
+    req.session["user_info"] = user_info
     return RedirectResponse("/", status_code=303)
 
 
-@app.get("/log_in_out")
+@app.get("/profile")
+def profile(req):
+    if not req.session.get("authenticated", False) or not req.session.get(
+        "user_info", False
+    ):
+        return unathorized_error(
+            "Nije moguće otvoriti profil bez prethodne autorizacije"
+        )
+    user_info = req.session.get("user_info")
+    return Div(
+        H1(f"Dobrodošli, {user_info.get("name", "Korisnik")}!"),
+        A("Povratak", href="/"),
+        P(
+            f"Email: {user_info.get("email", "N/A")}  Verified: {user_info.get("email_verified", "False")}"
+        ),
+        P(f"Nickname: {user_info.get("nickname", "N/A")}"),
+        (
+            Img(
+                src=user_info.get("picture", ""),
+                style="width: 50px; border-radius: 50%;",
+            )
+            if user_info.get("picture")
+            else None
+        ),
+    )
+
+
+@app.get("/homepage_auth")
 def auth_status(req):
     redirect_uri = f"{req.url.scheme}://{req.url.netloc}/redirect"
-    login_url = f"https://{os.getenv('AUTH0_DOMAIN')}/authorize?response_type=code&client_id={os.getenv('AUTH0_CLIENT_ID')}&redirect_uri={redirect_uri}&scope=openid%20profile%20email"
-    if req.session.get('authenticated', False):
-        return A('Odjava', href='/logout')
+    login_url = f"https://{os.getenv("AUTH0_DOMAIN")}/authorize?response_type=code&client_id={os.getenv("AUTH0_CLIENT_ID")}&redirect_uri={redirect_uri}&scope=openid%20profile%20email"
+    if req.session.get("authenticated", False):
+        return Div(
+            A("Odjava", href="/logout"),
+            Br(),
+            A("Korisnički profil", href="/profile"),
+            Br(),
+            A("Osvježi preslike", hx_put="/refresh_files"),
+        )
     else:
-        return A('Prijava', href=login_url)
+        return Div(A("Prijava", href=login_url))
+
+
+@app.put("/refresh_files")
+def refresh_files(req):
+    if not req.session.get("authenticated", False):
+        return unathorized_error(
+            "Nije moguće osvježiti preslike bez prethodne autorizacije"
+        )
+    export_csv()
+    export_json()
+    return (A("Osvježi preslike -- osvježene!", hx_put="/refresh_files"),)
 
 
 @app.get("/logout")
 def logout(req):
     req.session.clear()
     return RedirectResponse("/")
+
 
 @app.route("/datatable", methods="get")
 def get():
@@ -168,18 +217,6 @@ def get(search: str = "", vrijednost: str = ""):
 @app.route("/video_igre.json", methods="get")
 def get():
     return FileResponse("../video_igre.json", filename="video_igre.json")
-
-
-@app.route("/update_csv", methods=["post", "put"])
-def post_or_put():
-    export_csv()
-    return "Refresh"
-
-
-@app.route("/update_json", methods=["post", "put"])
-def post_or_put():
-    export_json()
-    return "Refresh"
 
 
 @app.route("/api/dump", methods="get")

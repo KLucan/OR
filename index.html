@@ -14,7 +14,7 @@
 		<h1>OR Laboratorijske vježbe</h1>
         <div>
             <h2>Autentifikacija</h2>
-            <p hx-get="/log_in_out" hx-trigger="load" hx-swap="innerHTML">
+            <p hx-get="/homepage_auth" hx-trigger="load" hx-swap="innerHTML">
                 Loading...
             </p>
         </div>
@@ -23,7 +23,7 @@
                 CSV zapis podataka
             </h2>
             <p>
-                <a href="/video_igre.csv">Preuzmi</a>    <button hx-post="/update_csv" hx-swap="none">Refresh</button>
+                <a href="/video_igre.csv">Preuzmi</a>
             </p>
         </div>
         <div>
@@ -31,7 +31,7 @@
                 JSON zapis podataka
             </h2>
             <p>
-                <a href="/video_igre.json">Preuzmi</a>   <button hx-post="/update_json" hx-swap="none">Refresh</button>
+                <a href="/video_igre.json">Preuzmi</a>
             </p>
         </div>
         <div>
