@@ -1,7 +1,8 @@
 import json
-import tempfile
+import os
 
 from fasthtml.common import *
+from fasthtml.oauth import Auth0AppClient
 from db import *
 from errors import *
 from scripts.export_json import export_json
@@ -11,15 +12,41 @@ from scripts.db import get_data
 exception_handlers = {500: internal_error}
 
 app = FastHTML(exception_handlers=exception_handlers)
+auth_client = Auth0AppClient(
+    os.getenv("AUTH0_DOMAIN"),
+    os.getenv("AUTH0_CLIENT_ID"),
+    os.getenv("AUTH0_CLIENT_SECRET"),
+    os.getenv("APP_SECRET_KEY"),
+)
 
 
 @app.route("/", methods="get")
 def home():
     return FileResponse("../index.html")
 
+@app.get("/redirect")
+async def redirect_handler(code: str, req):
+    req.session['authenticated'] = True
+    return RedirectResponse("/", status_code=303)
+
+
+@app.get("/log_in_out")
+def auth_status(req):
+    redirect_uri = f"{req.url.scheme}://{req.url.netloc}/redirect"
+    login_url = f"https://{os.getenv('AUTH0_DOMAIN')}/authorize?response_type=code&client_id={os.getenv('AUTH0_CLIENT_ID')}&redirect_uri={redirect_uri}&scope=openid%20profile%20email"
+    if req.session.get('authenticated', False):
+        return A('Odjava', href='/logout')
+    else:
+        return A('Prijava', href=login_url)
+
+
+@app.get("/logout")
+def logout(req):
+    req.session.clear()
+    return RedirectResponse("/")
 
 @app.route("/datatable", methods="get")
-def home():
+def get():
     return FileResponse("../datatable.html")
 
 
@@ -154,13 +181,19 @@ def post_or_put():
     export_json()
     return "Refresh"
 
+
 @app.route("/api/dump", methods="get")
 def get():
     res = dump()
     return JSONResponse(
-        {"status": "OK", "message": "Uspješno dohvaćena kolekcija igara.", "response": res},
+        {
+            "status": "OK",
+            "message": "Uspješno dohvaćena kolekcija igara.",
+            "response": res,
+        },
         200,
     )
+
 
 @app.route("/api/game/genre/{name}", methods="get")
 def get(name: str):
@@ -170,25 +203,30 @@ def get(name: str):
     except NotFoundError:
         return not_found_error("Žanr s navedenim nazivom nije pronađen.")
     return JSONResponse(
-        {"status": "OK", "message": "Uspješno dohvaćene igre za navedeni žanr.", "response": res},
+        {
+            "status": "OK",
+            "message": "Uspješno dohvaćene igre za navedeni žanr.",
+            "response": res,
+        },
         200,
     )
+
 
 @app.route("/api/game", methods="post")
 async def post(request):
     try:
         body = await request.body()
-        data = json.loads(body.decode('utf-8'))
+        data = json.loads(body.decode("utf-8"))
     except:
         return bad_request_error("Neispravni podaci u zahtjevu.")
-    name = data.get('name')
-    publisher = data.get('publisher')
-    developer = data.get('developer')
-    release_date = data.get('release_date')
-    genres = data.get('genres')
-    score = data.get('score')
-    length = data.get('length')
-    has_multiplayer = data.get('has_multiplayer')
+    name = data.get("name")
+    publisher = data.get("publisher")
+    developer = data.get("developer")
+    release_date = data.get("release_date")
+    genres = data.get("genres")
+    score = data.get("score")
+    length = data.get("length")
+    has_multiplayer = data.get("has_multiplayer")
     if not name or not publisher or not developer or not release_date:
         return bad_request_error("Neispravni podaci u zahtjevu.")
     if len(name) > 60:
@@ -219,38 +257,52 @@ def get(id: int):
 
 
 @app.route("/api/game/{id}", methods="put")
-async def put(
-    id: int,
-    request
-):
+async def put(id: int, request):
     try:
         body = await request.body()
-        data = json.loads(body.decode('utf-8'))
+        data = json.loads(body.decode("utf-8"))
     except:
         return bad_request_error("Neispravni podaci u zahtjevu.1")
-    name = data.get('name')
-    publisher = data.get('publisher')
-    developer = data.get('developer')
-    release_date = data.get('release_date')
-    genres = data.get('genres')
-    score = data.get('score')
-    length = data.get('length')
-    has_multiplayer = data.get('has_multiplayer')
+    name = data.get("name")
+    publisher = data.get("publisher")
+    developer = data.get("developer")
+    release_date = data.get("release_date")
+    genres = data.get("genres")
+    score = data.get("score")
+    length = data.get("length")
+    has_multiplayer = data.get("has_multiplayer")
     if id is None:
         return bad_request_error("Neispravni podaci u zahtjevu.3")
     if name is not None and len(name) > 60:
         return bad_request_error("Neispravni podaci u zahtjevu.2")
-    if publisher is not None and get_company(publisher) is None or developer is not None and get_company(developer) is None:
+    if (
+        publisher is not None
+        and get_company(publisher) is None
+        or developer is not None
+        and get_company(developer) is None
+    ):
         return bad_request_error("Neispravni podaci u zahtjevu.3")
     if length == "" or length == 0:
         length = None
     if score == "" or score == 0:
         score = None
     res = update_game(
-        id, name, publisher, developer, release_date, genres, score, length, has_multiplayer
+        id,
+        name,
+        publisher,
+        developer,
+        release_date,
+        genres,
+        score,
+        length,
+        has_multiplayer,
     )
     return JSONResponse(
-        {"status": "OK", "message": "Igra uspješno ažurirana.", "response": {"id": res}},
+        {
+            "status": "OK",
+            "message": "Igra uspješno ažurirana.",
+            "response": {"id": res},
+        },
         201,
     )
 
